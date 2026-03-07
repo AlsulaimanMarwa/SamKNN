@@ -21,6 +21,7 @@ def mixed_distance_dict(
     num_minmax: dict | None = None,
     sensitive_key: str | None = None,
     drop_sensitive: bool = True,
+    categorical_features: set[str] | None = None,
     missing_cost: float = 1.0,
     eps: float = 1e-12,
 ) -> float:
@@ -42,7 +43,6 @@ def mixed_distance_dict(
 
     xa_get = xa.get
     xb_get = xb.get
-    mm_get = num_minmax.get
     dist_sum = 0.0
     count = 0
 
@@ -53,6 +53,11 @@ def mixed_distance_dict(
         # missing
         if a is None or b is None:
             dist_sum += float(missing_cost)
+            count += 1
+            continue
+
+        if categorical_features and k in categorical_features:
+            dist_sum += 0.0 if a == b else 1.0
             count += 1
             continue
 
@@ -77,15 +82,17 @@ def mixed_distance_dict(
 
             rng = mm["max"] - mm["min"]
 
-            d = abs(a_num - b_num) / (rng + eps)
-
+            if rng <= eps:
+                d = 0.0
+            else:
+                d = abs(a_num - b_num) / (rng + eps)
             dist_sum += d
             count += 1
             continue
-
-        # categorical/other
+        # fallback for non-numeric, non-declared categorical
         dist_sum += 0.0 if a == b else 1.0
         count += 1
+
 
     return dist_sum / count if count else 0.0
 

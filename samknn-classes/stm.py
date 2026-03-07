@@ -9,24 +9,16 @@ import random
 from helper import mixed_distance_dict, _to_numeric
 
 class SAMkNNShortTermMemory(SAMkNNMemory):
-    def __init__(
-        self,
-        n_neighbors: int,
-        dist_func: Callable,
-        min_stm_size: int,
-        weighted: bool,
-        recalculate_stm_error: bool,
-        sensitive_key: str | None = None,
-        balance_sensitive_neighbors: bool = False,
-        use_synthetic: bool = False,
-        smote_k_neighbors: int = 5,
-        smote_random_state: int = 0,
-    ):
+    def __init__(self, n_neighbors: int, dist_func: Callable, min_stm_size: int, weighted: bool,
+                 recalculate_stm_error: bool, sensitive_key: str | None = None,
+                 balance_sensitive_neighbors: bool = False, use_synthetic: bool = False, smote_k_neighbors: int = 5,
+                 smote_random_state: int = 0, categorical_features: set[str] | None = None):
         super().__init__(
             n_neighbors=n_neighbors,
             dist_func=dist_func,
             sensitive_key=sensitive_key,
             balance_sensitive_neighbors=balance_sensitive_neighbors,
+            categorical_features=categorical_features,
         )
 
         self.min_stm_size = min_stm_size
@@ -206,6 +198,7 @@ class SAMkNNShortTermMemory(SAMkNNMemory):
                     num_minmax=self._num_minmax,  # UPDATED in-place
                     sensitive_key=self.sensitive_key,
                     drop_sensitive=True,  # distance ignores sensitive attribute
+                    categorical_features=self.categorical_features,
                 )
                 dists.append((d, j))
 
@@ -245,24 +238,37 @@ class SAMkNNShortTermMemory(SAMkNNMemory):
                 # numeric/date/datetime interpolation
                 a_num = _to_numeric(v_base)
                 b_num = _to_numeric(v_nei)
-                gap = random.random()
-                x_new[key] = float(a_num + gap * (b_num - a_num))
-
 
                 # categorical/other -> MODE over (base + k neighbors)
                 def _mode_with_random_tie(values: list[Any]) -> Any:
                     c = Counter(values)
                     top = max(c.values())
-                    #Gib mir alle Werte, die die maximale Häufigkeit haben.
+                    # Gib all values with max frequency and break ties randomly.
                     tied = [v for v, cnt in c.items() if cnt == top]
                     return random.choice(tied)
+
+                if key in self.categorical_features:
+                    vals = []
+                    for xd in categorical_pool:
+                        vv = xd.get(key, None)
+                        if vv is not None:
+                            vals.append(vv)
+                    if vals:
+                        x_new[key] = _mode_with_random_tie(vals)
+                    continue
+
+                if a_num is not None and b_num is not None:
+                    gap = random.random()
+                    x_new[key] = float(a_num + gap * (b_num - a_num))
+                    continue
+
                 vals = []
                 for xd in categorical_pool:
                     vv = xd.get(key, None)
                     if vv is not None:
                         vals.append(vv)
-
-                x_new[key] = _mode_with_random_tie(vals)
+                if vals:
+                    x_new[key] = _mode_with_random_tie(vals)
 
             x_new[self.sensitive_key] = force_sensitive_value
 

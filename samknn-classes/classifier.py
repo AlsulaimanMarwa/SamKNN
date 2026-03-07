@@ -49,24 +49,13 @@ class SAMkNNClassifier:
     nummerical features and all datapoints are required to have the same features.
     """
 
-    def __init__(
-            self,
-            n_neighbors: int = 20,
-            max_mem_size: int = 100,
-            max_ltm_size: int = 50,
-            min_stm_size: int = 10,
-            dist_func: Callable[[dict, dict], float] | None = None,
-            weighted: bool = True,
-            cleanup_every: int = 0,
-            softmax_norm: bool = False,
-            recalculate_stm_error: bool = False,
-            sensitive_key: str | None = None,
-            balance_sensitive_neighbors: bool = False,
-            use_synthetic_stm: bool = False,
-            smote_update_every: int = 5,
-            smote_k_neighbors: int = 5,
-            smote_random_state: int = 0,
-    ):
+    def __init__(self, n_neighbors: int = 10, max_mem_size: int = 100, max_ltm_size: int = 50, min_stm_size: int = 10,
+                 dist_func: Callable[[dict, dict], float] | None = None, weighted: bool = True,
+                 softmax_norm: bool = False, recalculate_stm_error: bool = False, sensitive_key: str | None = None,
+                 balance_sensitive_neighbors: bool = False, use_synthetic_stm: bool = False,
+                 smote_update_every: int = 5, smote_k_neighbors: int = None, smote_random_state: int = 0,
+                 categorical_features: set[str] | None = None,):
+        self.categorical_features = set(categorical_features or [])
         self.n_neighbors = n_neighbors
         self.max_mem_size = max_mem_size
         self.max_ltm_size = max_ltm_size
@@ -74,15 +63,16 @@ class SAMkNNClassifier:
         self.weighted = weighted
         self.classes: set[Hashable] = set()
         self.softmax_norm = softmax_norm
-        self._cleanup_counter = cleanup_every
         self.recalculate_stm_error = recalculate_stm_error #was macht das???
         self.weights: dict[str, int] = {"stm": 0, "ltm": 0, "cm": 0}
         self.sensitive_key = sensitive_key  # which feature name is S (if None -> infer from first sample)
         self.balance_sensitive_neighbors = balance_sensitive_neighbors
         self.use_synthetic_stm = use_synthetic_stm
+        self._num_minmax: dict[str, dict[str, float]] = {}
         self._learn_counter = 0
         self.smote_update_every = smote_update_every
-        self.smote_k_neighbors = smote_k_neighbors
+        if smote_k_neighbors is None:
+            self.smote_k_neighbors = n_neighbors
         self.smote_random_state = smote_random_state
 
         def drop_sensitive(features: Dict[str, float]) -> Dict[str, float]:
@@ -91,7 +81,13 @@ class SAMkNNClassifier:
             return {k: v for k, v in features.items() if k != self.sensitive_key}
 
         if dist_func is None:
-            self.dist_func = lambda a, b: mixed_distance_dict(drop_sensitive(a[0]), drop_sensitive(b[0]))
+            self.dist_func = lambda a, b: mixed_distance_dict(
+                drop_sensitive(a[0]),
+                drop_sensitive(b[0]),
+                num_minmax=self._num_minmax,
+                sensitive_key=self.sensitive_key,
+                categorical_features=self.categorical_features,
+            )
         else:
             self.dist_func = lambda a, b: dist_func(drop_sensitive(a[0]), drop_sensitive(b[0]))
 
@@ -106,12 +102,14 @@ class SAMkNNClassifier:
             use_synthetic=self.use_synthetic_stm,
             smote_k_neighbors=self.smote_k_neighbors,
             smote_random_state=self.smote_random_state,
+            categorical_features=self.categorical_features,
         )
         self.ltm = SAMkNNLongTermMemory(
             n_neighbors=self.n_neighbors,
             dist_func=self.dist_func,
             sensitive_key=self.sensitive_key,
             balance_sensitive_neighbors=self.balance_sensitive_neighbors,
+            categorical_features=self.categorical_features,
         )
     def learn_one(self, x: Dict[str, float], y: Hashable):
         self._learn_counter += 1

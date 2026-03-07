@@ -8,6 +8,7 @@ class SAMkNNMemory:
                  dist_func: Callable,
                  sensitive_key: str | None = None,
                  balance_sensitive_neighbors: bool = False,
+                 categorical_features: set[str] | None = None,
                  ):
         self.n_neighbors = n_neighbors
         self.dist_func = dist_func
@@ -18,6 +19,7 @@ class SAMkNNMemory:
 
         self.sensitive_key = sensitive_key
         self.balance_sensitive_neighbors = balance_sensitive_neighbors
+        self.categorical_features = set(categorical_features or [])
 
     def append(self, item):
         if isinstance(item, list):

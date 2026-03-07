@@ -9,17 +9,34 @@ from river import base
 
 
 class RiverSAMKNNClassifier(base.Classifier):
-    def __init__(self, *, n_neighbors=5, max_mem_size=2000, max_ltm_size=1000, min_stm_size=50, sensitive_key=None, balance_sensitive_neighbors=False, use_synthetic_stm=False, smote_update_every=5):
-        self.core = SAMkNNClassifier(
-            n_neighbors=n_neighbors,
-            max_mem_size=max_mem_size,
-            max_ltm_size=max_ltm_size,
-            min_stm_size=min_stm_size,
-            sensitive_key=sensitive_key,
-            balance_sensitive_neighbors=balance_sensitive_neighbors,
-            use_synthetic_stm=use_synthetic_stm,
-            smote_update_every=smote_update_every,
-        )
+    def __init__(
+        self,
+        *,
+        n_neighbors=10,
+        max_mem_size=100,
+        max_ltm_size=50,
+        min_stm_size=10,
+        dist_func=None,
+        weighted=True,
+        softmax_norm=False,
+        recalculate_stm_error=False,
+        sensitive_key=None,
+        balance_sensitive_neighbors=False,
+        use_synthetic_stm=False,
+        smote_update_every=5,
+        smote_k_neighbors=None,
+        smote_random_state=0,
+        categorical_features: set[str] | None = None,
+
+    ):
+        self.core = SAMkNNClassifier(n_neighbors=n_neighbors, max_mem_size=max_mem_size, max_ltm_size=max_ltm_size,
+                                     min_stm_size=min_stm_size, dist_func=dist_func, weighted=weighted,
+                                     softmax_norm=softmax_norm, recalculate_stm_error=recalculate_stm_error,
+                                     sensitive_key=sensitive_key,
+                                     balance_sensitive_neighbors=balance_sensitive_neighbors,
+                                     use_synthetic_stm=use_synthetic_stm, smote_update_every=smote_update_every,
+                                     smote_k_neighbors=smote_k_neighbors, smote_random_state=smote_random_state,
+                                     categorical_features=categorical_features)
 
     def learn_one(self, x, y):
         self.core.learn_one(x, y)

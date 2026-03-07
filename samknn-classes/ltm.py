@@ -7,17 +7,15 @@ from helper import mixed_distance_dict, _to_numeric
 from typing import Any, Hashable, Dict
 from memory_base import SAMkNNMemory
 class SAMkNNLongTermMemory(SAMkNNMemory):
-    def __init__(self,
-                 n_neighbors: int,
-                 dist_func: Callable,
-                 sensitive_key: str | None = None,
-                 balance_sensitive_neighbors: bool = False):
+    def __init__(self, n_neighbors: int, dist_func: Callable, sensitive_key: str | None = None,
+                 balance_sensitive_neighbors: bool = False, categorical_features: set[str] | None = None,):
         # Initialize parent class FIRST
         super().__init__(
             n_neighbors=n_neighbors,
             dist_func=dist_func,
             sensitive_key=sensitive_key,
-            balance_sensitive_neighbors=balance_sensitive_neighbors
+            balance_sensitive_neighbors=balance_sensitive_neighbors,
+            categorical_features=categorical_features
         )
 
     def clean(self, item: Tuple[Dict[str, float], Hashable], clean_dist: float):
@@ -76,7 +74,7 @@ class SAMkNNLongTermMemory(SAMkNNMemory):
                 for x, _yy in pts:
                     best_j, best_d = 0, float("inf")
                     for j, c in enumerate(centers):
-                        d = mixed_distance_dict(x, c, sensitive_key=s_key, drop_sensitive=True)
+                        d = mixed_distance_dict(x, c, sensitive_key=s_key, drop_sensitive=True, categorical_features=self.categorical_features)
                         if d < best_d:
                             best_d, best_j = d, j
                     clusters[best_j].append(x)
@@ -137,9 +135,11 @@ class SAMkNNLongTermMemory(SAMkNNMemory):
                     proto[k] = datetime.datetime.fromtimestamp(m).date()
                 else:
                     proto[k] = float(m)
-            else:
+                    
+            if k in self.categorical_features:
                 c = Counter(vals)
                 proto[k] = c.most_common(1)[0][0]
+                continue
 
         return proto
 
