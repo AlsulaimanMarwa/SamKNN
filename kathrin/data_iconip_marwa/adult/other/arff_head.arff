@@ -1,0 +1,17 @@
+@relation adult_generated-weka.filters.supervised.instance.StratifiedRemoveFolds-S0-V-N3-F1-weka.filters.unsupervised.attribute.Remove-R5-weka.filters.unsupervised.attribute.Remove-R3
+
+@attribute age { 25-60, <25, >60}
+@attribute workclass { ?, Federal-gov, Local-gov, Never-worked, Private, Self-emp-inc, Self-emp-not-inc, State-gov, Without-pay}
+@attribute education { 10th, 11th, 12th, 1st-4th, 5th-6th, 7th-8th, 9th, Assoc-acdm, Assoc-voc, Bachelors, Doctorate, HS-grad, Masters, Preschool, Prof-school, Some-college}
+@attribute marital-status { Divorced, Married-AF-spouse, Married-civ-spouse, Married-spouse-absent, Never-married, Separated, Widowed}
+@attribute occupation { ?, Adm-clerical, Armed-Forces, Craft-repair, Exec-managerial, Farming-fishing, Handlers-cleaners, Machine-op-inspct, Other-service, Priv-house-serv, Prof-specialty, Protective-serv, Sales, Tech-support, Transport-moving}
+@attribute relationship { Husband, Not-in-family, Other-relative, Own-child, Unmarried, Wife}
+@attribute race { Amer-Indian-Eskimo, Asian-Pac-Islander, Black, Other, White}
+@attribute sex { Female, Male}
+@attribute capital-gain { <=5000, >5000}
+@attribute capital-loss { <=40, >40}
+@attribute hours-per-week { 40-60, <40, >60}
+@attribute native-country { ?, Cambodia, Canada, China, Columbia, Cuba, Dominican-Republic, Ecuador, El-Salvador, England, France, Germany, Greece, Guatemala, Haiti, Holand-Netherlands, Honduras, Hong, Hungary, India, Iran, Ireland, Italy, Jamaica, Japan, Laos, Mexico, Nicaragua, Outlying-US(Guam-USVI-etc), Peru, Philippines, Poland, Portugal, Puerto-Rico, Scotland, South, Taiwan, Thailand, Trinadad&Tobago, United-States, Vietnam, Yugoslavia}
+@attribute income { 0.0, 1.0}
+
+@data

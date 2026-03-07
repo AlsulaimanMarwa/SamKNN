@@ -1,0 +1,35 @@
+@relation student-performance-portuguese-weka.filters.supervised.instance.StratifiedRemoveFolds-S0-V-N3-F1-weka.filters.unsupervised.attribute.Remove-R5-weka.filters.unsupervised.attribute.Remove-R3
+
+@attribute school { GP, MS}
+@attribute sex { F, M}
+@attribute age { 15, 16, 17, 18, 19, 20, 21, 22}
+@attribute address { R, U}
+@attribute famsize { GT3, LE3}
+@attribute Pstatus { A, T}
+@attribute Medu { 0, 1, 2, 3, 4}
+@attribute Fedu { 0, 1, 2, 3, 4}
+@attribute Mjob { at_home, health, other, services, teacher}
+@attribute Fjob { at_home, health, other, services, teacher}
+@attribute reason { course, home, other, reputation}
+@attribute guardian { father, mother, other}
+@attribute traveltime { 1, 2, 3, 4}
+@attribute studytime { 1, 2, 3, 4}
+@attribute failures { 0, 1, 2, 3}
+@attribute schoolsup { no, yes}
+@attribute famsup { no, yes}
+@attribute paid { no, yes}
+@attribute activities { no, yes}
+@attribute nursery { no, yes}
+@attribute higher { no, yes}
+@attribute internet { no, yes}
+@attribute romantic { no, yes}
+@attribute famrel { 1, 2, 3, 4, 5}
+@attribute freetime { 1, 2, 3, 4, 5}
+@attribute goout { 1, 2, 3, 4, 5}
+@attribute Dalc { 1, 2, 3, 4, 5}
+@attribute Walc { 1, 2, 3, 4, 5}
+@attribute health { 1, 2, 3, 4, 5}
+@attribute absences numeric
+@attribute G3 { 0, 1}
+
+@data
