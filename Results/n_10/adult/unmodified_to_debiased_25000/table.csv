@@ -1,0 +1,2 @@
+,Individual Fairness,Equal FPR,Accuracy,Balanced Accuracy,Recall,Cohen Kappa,Geometric Mean,F1 Score,Statistical Parity,Equal Opportunity,Disparate Impact
+SAMKNN,"0.0000, std: 0.0000","0.0326, std: 0.0038","0.7652, std: 0.0018","0.5817, std: 0.0076","0.2401, std: 0.0215","0.1983, std: 0.0148","0.4703, std: 0.0189","0.3208, std: 0.0194","0.0471, std: 0.0049","0.0340, std: 0.0051","0.3619, std: 0.0140"
