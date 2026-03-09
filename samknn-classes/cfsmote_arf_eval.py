@@ -172,7 +172,7 @@ def run_test_samknn(repetition: int):
             target="G3",
             #converters = {'age': float, 'income': float, 'education-num': float, 'capital-gain': float, 'capital-loss': float, 'hours-per-week': float}
             converters={"absences": float},
-            limit=1000,
+            limit=None,
             sensitive_attr=("sex", 1),
             switched_values=[0],
             categorical_features={
@@ -218,7 +218,7 @@ def run_test_samknn(repetition: int):
         run_samknn_dataset(in_file,
                            out_file,
                            target="income",
-                           limit=1000,
+                           limit=None,
                            #converters = { 'income': float},
                            sensitive_attr=("sex", 1),
                            switched_values=[0],
