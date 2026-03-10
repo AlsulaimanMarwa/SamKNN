@@ -361,6 +361,205 @@ def run_test_samknn(repetition: int):
                 })
 
 
+
+
+        for scenario in STUDENT_SCENARIOS:
+            in_file = STUDENT_PATH / scenario / f"run_{repetition}.csv"
+            out_file = (
+                    OUTPUT_PATH
+                    / f"n_{n_neighbors}_only_syn_stm"  # NEW: save results by n_neighbors
+                    / "student_performance"
+                    / scenario
+                    / f"run_{repetition}.csv"
+            )
+
+            if not in_file.exists():
+                raise FileNotFoundError(f"Missing input file: {in_file}")
+
+            print(f"Student scenario: {scenario}")
+            run_samknn_dataset(
+                in_file,
+                out_file,
+                target="G3",
+                n_neighbors = n_neighbors,
+                #converters = {'age': float, 'income': float, 'education-num': float, 'capital-gain': float, 'capital-loss': float, 'hours-per-week': float}
+                converters={"absences": float},
+                limit=None,
+                sensitive_attr=("sex", 1),
+                switched_values=[0],
+                use_synthetic_stm = True,
+                balance_sensitive_neighbors= False,
+                categorical_features={
+                    "school",
+                    "age",
+                    "address",
+                    "famsize",
+                    "Pstatus",
+                    "Medu",
+                    "Fedu",
+                    "Mjob",
+                    "Fjob",
+                    "reason",
+                    "guardian",
+                    "traveltime",
+                    "studytime",
+                    "failures",
+                    "schoolsup",
+                    "famsup",
+                    "paid",
+                    "activities",
+                    "nursery",
+                    "higher",
+                    "internet",
+                    "romantic",
+                    "famrel",
+                    "freetime",
+                    "goout",
+                    "Dalc",
+                    "Walc",
+                    "health"
+                }
+            )
+
+        for scenario in ADULT_SCENARIOS:
+            in_file = ADULT_PATH / scenario / f"run_{repetition}.csv"
+            out_file = (
+                    OUTPUT_PATH
+                    / f"n_{n_neighbors}_only_syn_stm"  # NEW: save results by n_neighbors
+                    / "adult"
+                    / scenario
+                    / f"run_{repetition}.csv"
+            )
+            if not in_file.exists():
+                raise FileNotFoundError(f"Missing input file: {in_file}")
+
+            print(f"Adult/Marwa scenario: {scenario}")
+            run_samknn_dataset(
+                in_file, out_file,
+                target="income",
+                limit=None,
+                sensitive_attr=("sex", 1),
+                switched_values=[0],
+                n_neighbors=n_neighbors,
+                use_synthetic_stm=True,
+                balance_sensitive_neighbors=False,
+                categorical_features={
+                    "hours-per-week",
+                    "capital-loss",
+                    "capital-gain",
+                    "education-num",
+                    "age",
+                    "workclass",
+                    "education",
+                    "marital-status",
+                    "occupation",
+                    "relationship",
+                    "race",
+                    "native-country",
+                })
+
+
+
+
+
+
+
+
+        for scenario in STUDENT_SCENARIOS:
+            in_file = STUDENT_PATH / scenario / f"run_{repetition}.csv"
+            out_file = (
+                    OUTPUT_PATH
+                    / f"n_{n_neighbors}_only_balanced_neighborhoods"  # NEW: save results by n_neighbors
+                    / "student_performance"
+                    / scenario
+                    / f"run_{repetition}.csv"
+            )
+
+            if not in_file.exists():
+                raise FileNotFoundError(f"Missing input file: {in_file}")
+
+            print(f"Student scenario: {scenario}")
+            run_samknn_dataset(
+                in_file,
+                out_file,
+                target="G3",
+                n_neighbors = n_neighbors,
+                #converters = {'age': float, 'income': float, 'education-num': float, 'capital-gain': float, 'capital-loss': float, 'hours-per-week': float}
+                converters={"absences": float},
+                limit=None,
+                sensitive_attr=("sex", 1),
+                switched_values=[0],
+                use_synthetic_stm = False,
+                balance_sensitive_neighbors= True,
+                categorical_features={
+                    "school",
+                    "age",
+                    "address",
+                    "famsize",
+                    "Pstatus",
+                    "Medu",
+                    "Fedu",
+                    "Mjob",
+                    "Fjob",
+                    "reason",
+                    "guardian",
+                    "traveltime",
+                    "studytime",
+                    "failures",
+                    "schoolsup",
+                    "famsup",
+                    "paid",
+                    "activities",
+                    "nursery",
+                    "higher",
+                    "internet",
+                    "romantic",
+                    "famrel",
+                    "freetime",
+                    "goout",
+                    "Dalc",
+                    "Walc",
+                    "health"
+                }
+            )
+
+        for scenario in ADULT_SCENARIOS:
+            in_file = ADULT_PATH / scenario / f"run_{repetition}.csv"
+            out_file = (
+                    OUTPUT_PATH
+                    / f"n_{n_neighbors}_only_balanced_neighborhoods"  # NEW: save results by n_neighbors
+                    / "adult"
+                    / scenario
+                    / f"run_{repetition}.csv"
+            )
+            if not in_file.exists():
+                raise FileNotFoundError(f"Missing input file: {in_file}")
+
+            print(f"Adult/Marwa scenario: {scenario}")
+            run_samknn_dataset(
+                in_file, out_file,
+                target="income",
+                limit=None,
+                sensitive_attr=("sex", 1),
+                switched_values=[0],
+                n_neighbors=n_neighbors,
+                use_synthetic_stm=False,
+                balance_sensitive_neighbors=True,
+                categorical_features={
+                    "hours-per-week",
+                    "capital-loss",
+                    "capital-gain",
+                    "education-num",
+                    "age",
+                    "workclass",
+                    "education",
+                    "marital-status",
+                    "occupation",
+                    "relationship",
+                    "race",
+                    "native-country",
+                })
+
 if __name__ == "__main__":
     i = int(sys.argv[1])
     run_test_samknn(i)
